@@ -15,12 +15,12 @@ function resdir(ripple, prefix) {
     return identity;
   }var folder = prefix ? resolve(prefix, "./resources") : resolve("./resources");
 
-  fs.existsSync(folder) && fs.readdirSync(folder).forEach(function (path) { 
+  fs.existsSync(folder) && fs.readdirSync(folder).forEach(function (path) {
     var js = ~path.indexOf(".js"),
         name = js ? path.replace(".js", "") : path,
         body = (js ? require : file)(resolve(folder, path)),
         res = is.obj(body) ? body : { name: name, body: body };
-// console.log('path', ripple.resources)
+
     return !ripple.resources[name] && ripple(res);
   });
 
