@@ -11,22 +11,42 @@ export default function resdir(ripple, prefix){
 
   fs.existsSync(folder) && fs.readdirSync(folder)
     .forEach(function(path){
-      var js = ~path.indexOf('.js')
-        , name = js ? path.replace('.js', '') : path
-        , body = (js ? require : file)(resolve(folder, path))
-        , res  = is.obj(body) ? body : { name, body } 
-
-      return !ripple.resources[name]
-          &&  ripple(res)
+      var absolute = resolve(folder, path)
+        
+      register(ripple)(absolute)
+      
+      if (process.env.NODE_ENV != 'production') 
+        watch(ripple)(absolute)
     })
 
   return ripple
 }
 
+function watch(ripple){
+  return function(path){
+    chokidar.watch(path)
+      .on('change', () => register(ripple)(path))
+  }
+}
+
+function register(ripple){
+  return function(path) {
+    var last = basename(path)
+      , isjs = extname(path) == '.js'
+      , name = isjs ? last.replace('.js', '') : last
+      , cach = delete require.cache[path]
+      , body = (isjs ? require : file)(path)
+      , res  = is.obj(body) ? body : { name, body } 
+
+    return ripple(res)
+  }
+}
+
+import { resolve, basename, extname } from 'path'
 import client from 'utilise/client'
 import file from 'utilise/file'
 import log from 'utilise/log'
 import is from 'utilise/is'
-import { resolve } from 'path'
+import chokidar from 'chokidar'
 import fs from 'fs'
 log = log('[ri/resdir]')
