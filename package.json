@@ -7,7 +7,7 @@
   "scripts": {
     "ignore:1": "find ./dist -type f -exec sed -i \"s/var _interopRequire/\\/* istanbul ignore next *\\/\\nvar _interopRequire/g\" {} ;",
     "ignore:2": "find ./dist -type f -exec sed -i \"s/if (client)/\\/* istanbul ignore next *\\/\\nif (client)/g\" {} ;",
-    "reset": "sh -c \"echo -e '/* istanbul ignore next */\\nmodule.exports = function foo(){ }'\" > ./resources/foo.js",
+    "reset": "sh -c \"echo '/* istanbul ignore next */' > ./resources/foo.js\" && sh -c \"echo 'module.exports = function sth(){ }' >> ./resources/foo.js\"",
     "babel": "babel src -d dist",
     "bundle": "cp ./node_modules/utilise/identity.js dist/client.js",
     "minify": "uglifyjs dist/client.js -m -c drop_console,dead_code -d debug=false -o dist/client.min.js",

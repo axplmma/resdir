@@ -1,1 +1,2 @@
-module.exports = function foo(){ }
+/* istanbul ignore next */
+module.exports = function sth(){ }
