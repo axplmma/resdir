@@ -8,18 +8,17 @@ var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["defau
 // -------------------------------------------
 module.exports = resdir;
 
-function resdir(ripple, prefix) {
+function resdir(ripple) {
+  var prefix = arguments[1] === undefined ? "." : arguments[1];
+
   log("creating");
 
-  if (client) {
+  /* istanbul ignore next */
+if (client) {
     return identity;
-  }var folder = prefix ? resolve(prefix, "./resources") : resolve("./resources");
-
-  fs.existsSync(folder) && fs.readdirSync(folder).forEach(function (path) {
-    var absolute = resolve(folder, path);
-
+  }glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
+    var absolute = resolve(prefix, path);
     register(ripple)(absolute);
-
     if (process.env.NODE_ENV != "production") watch(ripple)(absolute);
   });
 
@@ -62,6 +61,8 @@ var log = _interopRequire(require("utilise/log"));
 var is = _interopRequire(require("utilise/is"));
 
 var chokidar = _interopRequire(require("chokidar"));
+
+var glob = require("glob").sync;
 
 var fs = _interopRequire(require("fs"));
 

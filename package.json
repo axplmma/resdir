@@ -5,13 +5,16 @@
   "browser": "./dist/client.js",
   "author": "Pedram Emrouznejad (https://github.com/pemrouz)",
   "scripts": {
-    "ignore": "find ./dist -type f -exec sed -i \"s/var _interopRequire/\\/* istanbul ignore next *\\/\\nvar _interopRequire/g\" {} ;",
+    "ignore:1": "find ./dist -type f -exec sed -i \"s/var _interopRequire/\\/* istanbul ignore next *\\/\\nvar _interopRequire/g\" {} ;",
+    "ignore:2": "find ./dist -type f -exec sed -i \"s/if (client)/\\/* istanbul ignore next *\\/\\nif (client)/g\" {} ;",
+    "reset": "sh -c \"echo -e '/* istanbul ignore next */\\nmodule.exports = function foo(){ }'\" > ./resources/foo.js",
     "babel": "babel src -d dist",
     "bundle": "cp ./node_modules/utilise/identity.js dist/client.js",
     "minify": "uglifyjs dist/client.js -m -c drop_console,dead_code -d debug=false -o dist/client.min.js",
-    "build": "npm run babel && npm run ignore && npm run bundle && npm run minify",
-    "test": "istanbul test ./node_modules/mocha/bin/_mocha --report html -- -R spec",
-    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage"
+    "build": "npm run babel && npm run ignore:1 && npm run ignore:2 && npm run bundle && npm run minify",
+    "test": "npm run reset && istanbul test ./node_modules/mocha/bin/_mocha --report html -- -R spec",
+    "coverage": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
+    "cov": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
   },
   "license": "pemrouz.mit-license.org",
   "devDependencies": {
@@ -29,6 +32,7 @@
   },
   "dependencies": {
     "chokidar": "^1.0.5",
+    "glob": "^5.0.14",
     "utilise": "*"
   }
 }

@@ -1,20 +1,14 @@
 // -------------------------------------------
 // Loads resources from the /resources folder
 // -------------------------------------------
-export default function resdir(ripple, prefix){
+export default function resdir(ripple, prefix = '.'){
   log('creating')
   
   if (client) return identity
-  var folder = prefix 
-        ? resolve(prefix, './resources')
-        : resolve('./resources')
-
-  fs.existsSync(folder) && fs.readdirSync(folder)
-    .forEach(function(path){
-      var absolute = resolve(folder, path)
-        
+  glob(prefix + '/resources/**/!(test).{js,css}')
+    .map(function(path){
+      var absolute = resolve(prefix, path)
       register(ripple)(absolute)
-      
       if (process.env.NODE_ENV != 'production') 
         watch(ripple)(absolute)
     })
@@ -48,5 +42,6 @@ import file from 'utilise/file'
 import log from 'utilise/log'
 import is from 'utilise/is'
 import chokidar from 'chokidar'
+import { sync as glob } from 'glob'
 import fs from 'fs'
 log = log('[ri/resdir]')
