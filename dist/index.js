@@ -16,7 +16,8 @@ function resdir(ripple) {
   /* istanbul ignore next */
 if (client) {
     return identity;
-  }glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
+  }if (prefix.dir) prefix = prefix.dir;
+  glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
     var absolute = resolve(prefix, path);
     register(ripple)(absolute);
     if (process.env.NODE_ENV != "production") watch(ripple)(absolute);

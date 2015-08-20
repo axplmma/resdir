@@ -5,6 +5,7 @@ export default function resdir(ripple, prefix = '.'){
   log('creating')
   
   if (client) return identity
+  if (prefix.dir) prefix = prefix.dir
   glob(prefix + '/resources/**/!(test).{js,css}')
     .map(function(path){
       var absolute = resolve(prefix, path)
