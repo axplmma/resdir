@@ -16,7 +16,7 @@ function resdir(ripple) {
   /* istanbul ignore next */
 if (client) {
     return identity;
-  }if (prefix.dir) prefix = prefix.dir;
+  }if (is.obj(prefix)) prefix = prefix.dir || ".";
   glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
     var absolute = resolve(prefix, path);
     register(ripple)(absolute);

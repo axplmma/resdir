@@ -31,6 +31,26 @@ describe('Resources Folder', function(){
     expect(ripple.resources.test).to.not.be.ok
   })
 
+  it('should auto load from specific dir with opts', function(){  
+    var ripple = resdir(fn(css(core())), { dir: path.resolve() })
+    expect(ripple('foo')).to.be.a('function')
+    expect(ripple('foo').name).to.eql('foo')
+    expect(ripple('bar.css')).to.equal('.bar {}')
+    expect(ripple('sth')).to.be.a('function')
+    expect(ripple('data')).to.be.eql(String)
+    expect(ripple.resources.test).to.not.be.ok
+  })
+
+  it('should auto load resources folder when no dir prop on opts', function(){  
+    var ripple = resdir(fn(css(core())), { })
+    expect(ripple('foo')).to.be.a('function')
+    expect(ripple('foo').name).to.eql('foo')
+    expect(ripple('bar.css')).to.equal('.bar {}')
+    expect(ripple('sth')).to.be.a('function')
+    expect(ripple('data')).to.be.eql(String)
+    expect(ripple.resources.test).to.not.be.ok
+  })
+
   it('should watch for changes', function(done){  
     var ripple = resdir(fn(css(core())), path.resolve())
     expect(ripple('foo').name).to.be.eql('foo')
