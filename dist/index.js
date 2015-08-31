@@ -17,10 +17,13 @@ function resdir(ripple) {
 if (client) {
     return identity;
   }if (is.obj(prefix)) prefix = prefix.dir || ".";
-  glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
-    var absolute = resolve(prefix, path);
-    register(ripple)(absolute);
-    if (process.env.NODE_ENV != "production") watch(ripple)(absolute);
+
+  setTimeout(function () {
+    glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
+      var absolute = resolve(prefix, path);
+      register(ripple)(absolute);
+      if (process.env.NODE_ENV != "production") watch(ripple)(absolute);
+    });
   });
 
   return ripple;
