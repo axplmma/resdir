@@ -11,56 +11,80 @@ var expect = require('chai').expect
  
 describe('Resources Folder', function(){
 
-  it('should auto load resources folder', function(){  
+  it('should auto load resources folder', function(done){  
     var ripple = resdir(fn(css(core())))
-    expect(ripple('foo')).to.be.a('function')
-    expect(ripple('foo').name).to.eql('foo')
-    expect(ripple('bar.css')).to.equal('.bar {}')
-    expect(ripple('sth')).to.be.a('function')
-    expect(ripple('data')).to.be.eql(String)
-    expect(ripple.resources.test).to.not.be.ok
+
+    setTimeout(function(){
+      expect(ripple('foo')).to.be.a('function')
+      expect(ripple('foo').name).to.eql('foo')
+      expect(ripple('bar.css')).to.equal('.bar {}')
+      expect(ripple('sth')).to.be.a('function')
+      expect(ripple('data')).to.be.eql(String)
+      expect(ripple.resources.test).to.not.be.ok
+      done()
+    }, 10)
+
   })
 
-  it('should auto load from specific dir', function(){  
+  it('should auto load from specific dir', function(done){  
     var ripple = resdir(fn(css(core())), path.resolve())
-    expect(ripple('foo')).to.be.a('function')
-    expect(ripple('foo').name).to.eql('foo')
-    expect(ripple('bar.css')).to.equal('.bar {}')
-    expect(ripple('sth')).to.be.a('function')
-    expect(ripple('data')).to.be.eql(String)
-    expect(ripple.resources.test).to.not.be.ok
+    
+    setTimeout(function(){
+      expect(ripple('foo')).to.be.a('function')
+      expect(ripple('foo').name).to.eql('foo')
+      expect(ripple('bar.css')).to.equal('.bar {}')
+      expect(ripple('sth')).to.be.a('function')
+      expect(ripple('data')).to.be.eql(String)
+      expect(ripple.resources.test).to.not.be.ok
+      done()
+    }, 10)
+
   })
 
-  it('should auto load from specific dir with opts', function(){  
+  it('should auto load from specific dir with opts', function(done){  
     var ripple = resdir(fn(css(core())), { dir: path.resolve() })
-    expect(ripple('foo')).to.be.a('function')
-    expect(ripple('foo').name).to.eql('foo')
-    expect(ripple('bar.css')).to.equal('.bar {}')
-    expect(ripple('sth')).to.be.a('function')
-    expect(ripple('data')).to.be.eql(String)
-    expect(ripple.resources.test).to.not.be.ok
+    
+    setTimeout(function(){
+      expect(ripple('foo')).to.be.a('function')
+      expect(ripple('foo').name).to.eql('foo')
+      expect(ripple('bar.css')).to.equal('.bar {}')
+      expect(ripple('sth')).to.be.a('function')
+      expect(ripple('data')).to.be.eql(String)
+      expect(ripple.resources.test).to.not.be.ok
+      done()
+    }, 10)
+
   })
 
-  it('should auto load resources folder when no dir prop on opts', function(){  
+  it('should auto load resources folder when no dir prop on opts', function(done){  
     var ripple = resdir(fn(css(core())), { })
-    expect(ripple('foo')).to.be.a('function')
-    expect(ripple('foo').name).to.eql('foo')
-    expect(ripple('bar.css')).to.equal('.bar {}')
-    expect(ripple('sth')).to.be.a('function')
-    expect(ripple('data')).to.be.eql(String)
-    expect(ripple.resources.test).to.not.be.ok
+
+    setTimeout(function(){
+      expect(ripple('foo')).to.be.a('function')
+      expect(ripple('foo').name).to.eql('foo')
+      expect(ripple('bar.css')).to.equal('.bar {}')
+      expect(ripple('sth')).to.be.a('function')
+      expect(ripple('data')).to.be.eql(String)
+      expect(ripple.resources.test).to.not.be.ok
+      done()
+    }, 10)
+
   })
 
   it('should watch for changes', function(done){  
     var ripple = resdir(fn(css(core())), path.resolve())
-    expect(ripple('foo').name).to.be.eql('foo')
-    fs.writeFileSync('./resources/foo.js', 'module.exports = function baz(){ }')
 
     setTimeout(function(){
-      expect(ripple('foo').name).to.be.eql('baz')
-      fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
-      done()
-    }, 50)
+      expect(ripple('foo').name).to.be.eql('foo')
+      fs.writeFileSync('./resources/foo.js', 'module.exports = function baz(){ }')
+
+      setTimeout(function(){
+        expect(ripple('foo').name).to.be.eql('baz')
+        fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
+        done()
+      }, 50)
+    }, 10)
+
   })
 
   it('should not watch for changes in prod', function(done){  
@@ -68,15 +92,19 @@ describe('Resources Folder', function(){
     process.env.NODE_ENV = 'production'
 
     var ripple = resdir(fn(css(core())), path.resolve())
-    expect(ripple('foo').name).to.be.eql('foo')
-    fs.writeFileSync('./resources/foo.js', 'module.exports = function baz(){ }')
 
     setTimeout(function(){
       expect(ripple('foo').name).to.be.eql('foo')
-      fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
-      done()
-    }, 50)
-    process.env.NODE_ENV = original
+      fs.writeFileSync('./resources/foo.js', 'module.exports = function baz(){ }')
+
+      setTimeout(function(){
+        expect(ripple('foo').name).to.be.eql('foo')
+        fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
+        done()
+      }, 50)
+      process.env.NODE_ENV = original
+    }, 10)
+    
   })
 
 })
