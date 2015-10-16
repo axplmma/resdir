@@ -14,7 +14,9 @@
     "build": "npm run babel && npm run ignore:1 && npm run ignore:2 && npm run bundle && npm run minify",
     "test": "npm run reset && istanbul test ./node_modules/mocha/bin/_mocha --report html -- -R spec",
     "coverage": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
-    "cov": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec"
+    "cov": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
+    "version": "npm run build && git add -A",
+    "postversion": "git push && git push --tags"
   },
   "license": "pemrouz.mit-license.org",
   "devDependencies": {
