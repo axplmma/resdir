@@ -3,10 +3,7 @@
 // -------------------------------------------
 export default function resdir(ripple, prefix = '.'){
   log('creating')
-  
-  if (client) return identity
   if (is.obj(prefix)) prefix = prefix.dir || '.'
-
   glob(prefix + '/resources/**/!(test).{js,css}')
     .map(function(path){
       var absolute = resolve(prefix, path)
@@ -32,7 +29,7 @@ function register(ripple){
       , name = isjs ? last.replace('.js', '') : last
       , cach = delete require.cache[path]
       , body = (isjs ? require : file)(path)
-      , res  = is.obj(body) ? body : { name, body } 
+      , res  = is.obj(body = body.default || body) ? body : { name, body } 
 
     return ripple(res)
   }
@@ -40,10 +37,9 @@ function register(ripple){
 
 import { resolve, basename, extname } from 'path'
 import client from 'utilise/client'
-import file from 'utilise/file'
-import log from 'utilise/log'
-import is from 'utilise/is'
-import chokidar from 'chokidar'
 import { sync as glob } from 'glob'
+import file from 'utilise/file'
+import chokidar from 'chokidar'
+import is from 'utilise/is'
 import fs from 'fs'
-log = log('[ri/resdir]')
+var log = require('utilise/log')('[ri/resdir]')

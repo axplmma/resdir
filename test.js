@@ -2,11 +2,11 @@
 
 var expect = require('chai').expect
   , client = require('utilise/client')
-  , resdir = require('./')
   , path = require('path')
-  , core = require('rijs.core')
-  , css = require('rijs.css')
-  , fn = require('rijs.fn')
+  , core = require('rijs.core').default
+  , css = require('rijs.css').default
+  , fn = require('rijs.fn').default
+  , resdir = require('./').default
   , fs = require('fs')
  
 describe('Resources Folder', function(){
@@ -65,7 +65,7 @@ describe('Resources Folder', function(){
 
   })
 
-  it('should not watch for changes in prod', function(){  
+  it('should not watch for changes in prod', function(done){  
     var original = process.env.NODE_ENV
     process.env.NODE_ENV = 'production'
     var ripple = resdir(fn(css(core())), path.resolve())

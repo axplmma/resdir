@@ -1,27 +1,49 @@
-"use strict";
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = resdir;
+
+var _path = require('path');
+
+var _client = require('utilise/client');
+
+var _client2 = _interopRequireDefault(_client);
+
+var _glob = require('glob');
+
+var _file = require('utilise/file');
+
+var _file2 = _interopRequireDefault(_file);
+
+var _chokidar = require('chokidar');
+
+var _chokidar2 = _interopRequireDefault(_chokidar);
+
+var _is = require('utilise/is');
+
+var _is2 = _interopRequireDefault(_is);
+
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
 
 /* istanbul ignore next */
-var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // -------------------------------------------
 // Loads resources from the /resources folder
 // -------------------------------------------
-module.exports = resdir;
-
 function resdir(ripple) {
-  var prefix = arguments[1] === undefined ? "." : arguments[1];
+  var prefix = arguments.length <= 1 || arguments[1] === undefined ? '.' : arguments[1];
 
-  log("creating");
-
-  /* istanbul ignore next */
-if (client) {
-    return identity;
-  }if (is.obj(prefix)) prefix = prefix.dir || ".";
-
-  glob(prefix + "/resources/**/!(test).{js,css}").map(function (path) {
-    var absolute = resolve(prefix, path);
+  log('creating');
+  if (_is2.default.obj(prefix)) prefix = prefix.dir || '.';
+  (0, _glob.sync)(prefix + '/resources/**/!(test).{js,css}').map(function (path) {
+    var absolute = (0, _path.resolve)(prefix, path);
     register(ripple)(absolute);
-    if (process.env.NODE_ENV != "production") watch(ripple)(absolute);
+    if (process.env.NODE_ENV != 'production') watch(ripple)(absolute);
   });
 
   return ripple;
@@ -29,7 +51,7 @@ if (client) {
 
 function watch(ripple) {
   return function (path) {
-    chokidar.watch(path).on("change", function () {
+    _chokidar2.default.watch(path).on('change', function () {
       return register(ripple)(path);
     });
   };
@@ -37,35 +59,15 @@ function watch(ripple) {
 
 function register(ripple) {
   return function (path) {
-    var last = basename(path),
-        isjs = extname(path) == ".js",
-        name = isjs ? last.replace(".js", "") : last,
+    var last = (0, _path.basename)(path),
+        isjs = (0, _path.extname)(path) == '.js',
+        name = isjs ? last.replace('.js', '') : last,
         cach = delete require.cache[path],
-        body = (isjs ? require : file)(path),
-        res = is.obj(body) ? body : { name: name, body: body };
+        body = (isjs ? require : _file2.default)(path),
+        res = _is2.default.obj(body = body.default || body) ? body : { name: name, body: body };
 
     return ripple(res);
   };
 }
 
-var _path = require("path");
-
-var resolve = _path.resolve;
-var basename = _path.basename;
-var extname = _path.extname;
-
-var client = _interopRequire(require("utilise/client"));
-
-var file = _interopRequire(require("utilise/file"));
-
-var log = _interopRequire(require("utilise/log"));
-
-var is = _interopRequire(require("utilise/is"));
-
-var chokidar = _interopRequire(require("chokidar"));
-
-var glob = require("glob").sync;
-
-var fs = _interopRequire(require("fs"));
-
-log = log("[ri/resdir]");
+var log = require('utilise/log')('[ri/resdir]');

@@ -1,1 +1,1 @@
-module.exports = function baz(){ }
+module.exports = function foo(){ }
