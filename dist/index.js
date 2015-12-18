@@ -27,8 +27,6 @@ var _is2 = _interopRequireDefault(_is);
 
 var _fs = require('fs');
 
-var _fs2 = _interopRequireDefault(_fs);
-
 /* istanbul ignore next */
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -60,11 +58,12 @@ function watch(ripple) {
 function register(ripple) {
   return function (path) {
     var last = (0, _path.basename)(path),
-        isjs = (0, _path.extname)(path) == '.js',
-        name = isjs ? last.replace('.js', '') : last,
+        isJS = (0, _path.extname)(path) == '.js',
+        name = isJS ? last.replace('.js', '') : last,
         cach = delete require.cache[path],
-        body = (isjs ? require : _file2.default)(path),
-        res = _is2.default.obj(body = body.default || body) ? body : { name: name, body: body };
+        body = (isJS ? require : _file2.default)(path),
+        css = isJS && (0, _fs.existsSync)(path.replace('.js', '.css')),
+        res = _is2.default.obj(body = body.default || body) ? body : css ? { name: name, body: body, headers: { needs: '[css]' } } : { name: name, body: body };
 
     return ripple(res);
   };

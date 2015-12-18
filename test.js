@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect
   , client = require('utilise/client')
+  , time = require('utilise/time')
   , path = require('path')
   , core = require('rijs.core').default
   , css = require('rijs.css').default
@@ -57,11 +58,11 @@ describe('Resources Folder', function(){
     expect(ripple('foo').name).to.be.eql('foo')
     fs.writeFileSync('./resources/foo.js', 'module.exports = function baz(){ }')
 
-    setTimeout(function(){
+    time(50, function(){
       expect(ripple('foo').name).to.be.eql('baz')
       fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
       done()
-    }, 50)
+    })
 
   })
 
@@ -73,13 +74,22 @@ describe('Resources Folder', function(){
     expect(ripple('foo').name).to.be.eql('foo')
     fs.writeFileSync('./resources/foo.js', 'module.exports = function baz(){ }')
 
-    setTimeout(function(){
+    time(500, function(){
       expect(ripple('foo').name).to.be.eql('foo')
       fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
       done()
-    }, 50)
+    })
+
     process.env.NODE_ENV = original
     
+  })
+
+  it('should not auto-add needs header for default styles', function(){  
+    var ripple = resdir(fn(css(core())))
+    expect(ripple('component')).to.be.a('function')
+    expect(ripple('component.css')).to.be.eql(':host {}')
+    expect(ripple.resources.component.headers.needs).to.be.eql('[css]')
+    expect(ripple.resources.foo.headers.needs).to.be.not.ok
   })
 
 })

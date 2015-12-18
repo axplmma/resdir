@@ -25,11 +25,14 @@ function watch(ripple){
 function register(ripple){
   return function(path) {
     var last = basename(path)
-      , isjs = extname(path) == '.js'
-      , name = isjs ? last.replace('.js', '') : last
+      , isJS = extname(path) == '.js'
+      , name = isJS ? last.replace('.js', '') : last
       , cach = delete require.cache[path]
-      , body = (isjs ? require : file)(path)
-      , res  = is.obj(body = body.default || body) ? body : { name, body } 
+      , body = (isJS ? require : file)(path)
+      , css  = isJS && exists(path.replace('.js', '.css'))
+      , res  = is.obj(body = body.default || body) ? body 
+             : css ? { name, body, headers: { needs: '[css]' } } 
+                   : { name, body } 
 
     return ripple(res)
   }
@@ -41,5 +44,5 @@ import { sync as glob } from 'glob'
 import file from 'utilise/file'
 import chokidar from 'chokidar'
 import is from 'utilise/is'
-import fs from 'fs'
+import { existsSync as exists } from 'fs'
 var log = require('utilise/log')('[ri/resdir]')
