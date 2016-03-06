@@ -92,6 +92,11 @@ describe('Resources Folder', function(){
     expect(ripple.resources.foo.headers.needs).to.be.not.ok
   })
 
+  it('should ignore resources prefixed with _', function(){  
+    var ripple = resdir(fn(css(core())))
+    expect(ripple('ignore')).to.not.be.ok
+  })
+
 })
 
 }()
