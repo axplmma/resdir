@@ -4,14 +4,27 @@
 export default function resdir(ripple, prefix = '.'){
   log('creating')
   if (is.obj(prefix)) prefix = prefix.dir || '.'
-  glob(prefix + '/resources/**/!(test).{js,css}')
-    .filter(not(includes('/_')))
-    .map(function(path){
-      var absolute = resolve(prefix, path)
-      register(ripple)(absolute)
-      if (process.env.NODE_ENV != 'production') 
-        watch(ripple)(absolute)
+
+  var argv = require('minimist')(process.argv.slice(2))
+
+  ;(argv.r || argv.resdirs || '')
+    .split(',')
+    .concat(prefix)
+    .map(path => resolve(path))
+    .map(prefix => {
+      glob(prefix + '/resources/**/!(test).{js,css}')
+        .filter(not(includes('/_')))
+        .map(path => resolve(prefix, path))
+        .map(path => {
+          var absolute = resolve(prefix, path)
+          register(ripple)(absolute)
+          if (process.env.NODE_ENV != 'production') 
+            watch(ripple)(absolute)
+        })    
     })
+
+  values(ripple.resources)
+    .map(res => is.fn(res.headers.loaded) && res.headers.loaded(ripple, res))
 
   return ripple
 }
@@ -39,7 +52,7 @@ import { existsSync as exists } from 'fs'
 import { sync as glob } from 'glob'
 import chokidar from 'chokidar'
 import includes from 'utilise/includes'
-import client from 'utilise/client'
+import values from 'utilise/values'
 import file from 'utilise/file'
 import not from 'utilise/not'
 import is from 'utilise/is'

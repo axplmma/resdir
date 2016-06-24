@@ -19,9 +19,9 @@ var _includes = require('utilise/includes');
 
 var _includes2 = _interopRequireDefault(_includes);
 
-var _client = require('utilise/client');
+var _values = require('utilise/values');
 
-var _client2 = _interopRequireDefault(_client);
+var _values2 = _interopRequireDefault(_values);
 
 var _file = require('utilise/file');
 
@@ -46,10 +46,22 @@ function resdir(ripple) {
 
   log('creating');
   if (_is2.default.obj(prefix)) prefix = prefix.dir || '.';
-  (0, _glob.sync)(prefix + '/resources/**/!(test).{js,css}').filter((0, _not2.default)((0, _includes2.default)('/_'))).map(function (path) {
-    var absolute = (0, _path.resolve)(prefix, path);
-    register(ripple)(absolute);
-    if (process.env.NODE_ENV != 'production') watch(ripple)(absolute);
+
+  var argv = require('minimist')(process.argv.slice(2));
+  console.log("argv", argv);(argv.r || argv.resdirs || '').split(',').concat(prefix).map(function (path) {
+    return (0, _path.resolve)(path);
+  }).map(function (prefix) {
+    (0, _glob.sync)(prefix + '/resources/**/!(test).{js,css}').filter((0, _not2.default)((0, _includes2.default)('/_'))).map(function (path) {
+      return (0, _path.resolve)(prefix, path);
+    }).map(function (path) {
+      var absolute = (0, _path.resolve)(prefix, path);
+      register(ripple)(absolute);
+      if (process.env.NODE_ENV != 'production') watch(ripple)(absolute);
+    });
+  });
+
+  (0, _values2.default)(ripple.resources).map(function (res) {
+    return _is2.default.fn(res.headers.loaded) && res.headers.loaded(ripple, res);
   });
 
   return ripple;

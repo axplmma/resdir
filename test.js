@@ -1,5 +1,3 @@
-!(require('utilise/client')) && !function(){
-
 var expect = require('chai').expect
   , client = require('utilise/client')
   , time = require('utilise/time')
@@ -80,8 +78,7 @@ describe('Resources Folder', function(){
       done()
     })
 
-    process.env.NODE_ENV = original
-    
+    process.env.NODE_ENV = original    
   })
 
   it('should not auto-add needs header for default styles', function(){  
@@ -97,6 +94,38 @@ describe('Resources Folder', function(){
     expect(ripple('ignore')).to.not.be.ok
   })
 
-})
+  it('should invoke loaded function', function(){  
+    var ripple = resdir(fn(css(core())))
+    expect(loadedResdir[0]).to.eql(ripple)
+    expect(loadedResdir[1].name).to.eql('data')
+    expect(loadedResdir[1].body).to.eql(String)
+  })
 
-}()
+  it('should load from additional resdirs from command line', function(){  
+    process.argv = [
+      0
+    , 0
+    , '--resdirs'
+    , './tertiary,./secondary'
+    ]
+
+    var ripple = resdir(fn(core()))
+    expect('data' in ripple.resources).to.be.ok
+    expect('secondary' in ripple.resources).to.be.ok
+    expect('tertiary' in ripple.resources).to.be.ok
+  })
+
+  it('should load from additional resdirs from command line - shortcut', function(){  
+    process.argv = [
+      0
+    , 0
+    , '-r'
+    , './tertiary,./secondary'
+    ]
+
+    var ripple = resdir(fn(core()))
+    expect('data' in ripple.resources).to.be.ok
+    expect('secondary' in ripple.resources).to.be.ok
+    expect('tertiary' in ripple.resources).to.be.ok
+  })
+})
