@@ -47,8 +47,7 @@ function resdir(ripple) {
   log('creating');
   if (_is2.default.obj(prefix)) prefix = prefix.dir || '.';
 
-  var argv = require('minimist')(process.argv.slice(2));
-  console.log("argv", argv);(argv.r || argv.resdirs || '').split(',').concat(prefix).map(function (path) {
+  var argv = require('minimist')(process.argv.slice(2));(argv.r || argv.resdirs || '').split(',').concat(prefix).map(function (path) {
     return (0, _path.resolve)(path);
   }).map(function (prefix) {
     (0, _glob.sync)(prefix + '/resources/**/!(test).{js,css}').filter((0, _not2.default)((0, _includes2.default)('/_'))).map(function (path) {
