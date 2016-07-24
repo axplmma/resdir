@@ -59,9 +59,7 @@ function resdir(ripple) {
     });
   });
 
-  (0, _values2.default)(ripple.resources).map(function (res) {
-    return _is2.default.fn(res.headers.loaded) && res.headers.loaded(ripple, res);
-  });
+  (0, _values2.default)(ripple.resources).map(loaded(ripple));
 
   return ripple;
 }
@@ -69,7 +67,7 @@ function resdir(ripple) {
 var watch = function watch(ripple) {
   return function (path) {
     return _chokidar2.default.watch(path).on('change', function () {
-      return register(ripple)(path);
+      return loaded(ripple)(register(ripple)(path));
     });
   };
 };
@@ -84,8 +82,13 @@ var register = function register(ripple) {
         css = isJS && (0, _fs.existsSync)(path.replace('.js', '.css')),
         res = _is2.default.obj(body = body.default || body) ? body : css ? { name: name, body: body, headers: { needs: '[css]' } } : { name: name, body: body };
 
-    return ripple(res);
+    return ripple(res), ripple.resources[name];
   };
 };
 
-var log = require('utilise/log')('[ri/resdir]');
+var log = require('utilise/log')('[ri/resdir]'),
+    loaded = function loaded(ripple) {
+  return function (res) {
+    return _is2.default.fn(res.headers.loaded) && res.headers.loaded(ripple, res);
+  };
+};

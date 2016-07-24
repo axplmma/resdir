@@ -24,14 +24,14 @@ export default function resdir(ripple, prefix = '.'){
     })
 
   values(ripple.resources)
-    .map(res => is.fn(res.headers.loaded) && res.headers.loaded(ripple, res))
+    .map(loaded(ripple))
 
   return ripple
 }
 
 const watch = ripple => path => 
   chokidar.watch(path)
-    .on('change', () => register(ripple)(path))
+    .on('change', () => loaded(ripple)(register(ripple)(path)))
 
 const register = ripple => path => {
   var last = basename(path)
@@ -44,7 +44,7 @@ const register = ripple => path => {
            : css ? { name, body, headers: { needs: '[css]' } } 
                  : { name, body } 
 
-  return ripple(res)
+  return ripple(res), ripple.resources[name]
 }
 
 import { resolve, basename, extname } from 'path'
@@ -57,3 +57,4 @@ import file from 'utilise/file'
 import not from 'utilise/not'
 import is from 'utilise/is'
 const log = require('utilise/log')('[ri/resdir]')
+    , loaded = ripple => res => is.fn(res.headers.loaded) && res.headers.loaded(ripple, res)
