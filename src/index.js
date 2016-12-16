@@ -1,22 +1,22 @@
 // -------------------------------------------
 // Loads resources from the /resources folder
 // -------------------------------------------
-export default function resdir(ripple, prefix = '.'){
+export default function resdir(ripple, { dir = '.' } = {}){
   log('creating')
-  if (is.obj(prefix)) prefix = prefix.dir || '.'
 
   var argv = require('minimist')(process.argv.slice(2))
 
   ;(argv.r || argv.resdirs || '')
     .split(',')
-    .concat(prefix)
+    .concat(dir)
+    .filter(Boolean)
     .map(path => resolve(path))
-    .map(prefix => {
-      glob(prefix + '/resources/**/!(test).{js,css}')
+    .map(dir => {
+      glob(dir + '/resources/**/!(test).{js,css}')
         .filter(not(includes('/_')))
-        .map(path => resolve(prefix, path))
+        .map(path => resolve(dir, path))
         .map(path => {
-          var absolute = resolve(prefix, path)
+          var absolute = resolve(dir, path)
           register(ripple)(absolute)
           if (process.env.NODE_ENV != 'production') 
             watch(ripple)(absolute)
