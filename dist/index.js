@@ -42,18 +42,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // Loads resources from the /resources folder
 // -------------------------------------------
 function resdir(ripple) {
-  var prefix = arguments.length <= 1 || arguments[1] === undefined ? '.' : arguments[1];
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$dir = _ref.dir,
+      dir = _ref$dir === undefined ? '.' : _ref$dir;
 
   log('creating');
-  if (_is2.default.obj(prefix)) prefix = prefix.dir || '.';
 
-  var argv = require('minimist')(process.argv.slice(2));(argv.r || argv.resdirs || '').split(',').concat(prefix).map(function (path) {
+  var argv = require('minimist')(process.argv.slice(2));(argv.r || argv.resdirs || '').split(',').concat(dir).filter(Boolean).map(function (path) {
     return (0, _path.resolve)(path);
-  }).map(function (prefix) {
-    (0, _glob.sync)(prefix + '/resources/**/!(test).{js,css}').filter((0, _not2.default)((0, _includes2.default)('/_'))).map(function (path) {
-      return (0, _path.resolve)(prefix, path);
+  }).map(function (dir) {
+    (0, _glob.sync)(dir + '/resources/**/!(test).{js,css}').filter((0, _not2.default)((0, _includes2.default)('/_'))).map(function (path) {
+      return (0, _path.resolve)(dir, path);
     }).map(function (path) {
-      var absolute = (0, _path.resolve)(prefix, path);
+      var absolute = (0, _path.resolve)(dir, path);
       register(ripple)(absolute);
       if (process.env.NODE_ENV != 'production') watch(ripple)(absolute);
     });
