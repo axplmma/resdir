@@ -9,15 +9,13 @@ var _path = require('path');
 
 var _fs = require('fs');
 
-var _glob = require('glob');
-
 var _chokidar = require('chokidar');
 
 var _chokidar2 = _interopRequireDefault(_chokidar);
 
-var _includes = require('utilise/includes');
+var _append = require('utilise/append');
 
-var _includes2 = _interopRequireDefault(_includes);
+var _append2 = _interopRequireDefault(_append);
 
 var _values = require('utilise/values');
 
@@ -27,9 +25,9 @@ var _file = require('utilise/file');
 
 var _file2 = _interopRequireDefault(_file);
 
-var _not = require('utilise/not');
+var _def = require('utilise/def');
 
-var _not2 = _interopRequireDefault(_not);
+var _def2 = _interopRequireDefault(_def);
 
 var _is = require('utilise/is');
 
@@ -47,31 +45,19 @@ function resdir(ripple) {
       dir = _ref$dir === undefined ? '.' : _ref$dir;
 
   log('creating');
+  var argv = require('minimist')(process.argv.slice(2)),
+      folders = (argv.r || argv.resdirs || '').split(',').concat(dir).filter(Boolean).map(function (d) {
+    return (0, _path.resolve)(d);
+  }).map((0, _append2.default)('/resources/**/!(test).{js,css}'));
 
-  var argv = require('minimist')(process.argv.slice(2));(argv.r || argv.resdirs || '').split(',').concat(dir).filter(Boolean).map(function (path) {
-    return (0, _path.resolve)(path);
-  }).map(function (dir) {
-    (0, _glob.sync)(dir + '/resources/**/!(test).{js,css}').filter((0, _not2.default)((0, _includes2.default)('/_'))).map(function (path) {
-      return (0, _path.resolve)(dir, path);
-    }).map(function (path) {
-      var absolute = (0, _path.resolve)(dir, path);
-      register(ripple)(absolute);
-      if (process.env.NODE_ENV != 'production') watch(ripple)(absolute);
-    });
+  _chokidar2.default.watch(folders, { ignored: /\b_/ }).on('error', err).on('add', register(ripple)).on('change', register(ripple)).on('ready', function () {
+    (0, _def2.default)(ripple, 'ready', true);
+    (0, _values2.default)(ripple.resources).map(loaded(ripple));
+    ripple.emit('ready');
   });
-
-  (0, _values2.default)(ripple.resources).map(loaded(ripple));
 
   return ripple;
 }
-
-var watch = function watch(ripple) {
-  return function (path) {
-    return _chokidar2.default.watch(path).on('change', function () {
-      return loaded(ripple)(register(ripple)(path));
-    });
-  };
-};
 
 var register = function register(ripple) {
   return function (path) {
@@ -83,11 +69,14 @@ var register = function register(ripple) {
         css = isJS && (0, _fs.existsSync)(path.replace('.js', '.css')),
         res = _is2.default.obj(body = body.default || body) ? body : css ? { name: name, body: body, headers: { needs: '[css]' } } : { name: name, body: body };
 
-    return ripple(res), ripple.resources[name];
+    ripple(res);
+
+    if (ripple.ready) loaded(res);
   };
 };
 
 var log = require('utilise/log')('[ri/resdir]'),
+    err = require('utilise/err')('[ri/resdir]'),
     loaded = function loaded(ripple) {
   return function (res) {
     return _is2.default.fn(res.headers.loaded) && res.headers.loaded(ripple, res);
