@@ -33,6 +33,10 @@ var _is = require('utilise/is');
 
 var _is2 = _interopRequireDefault(_is);
 
+var _lo = require('utilise/lo');
+
+var _lo2 = _interopRequireDefault(_lo);
+
 /* istanbul ignore next */
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -48,12 +52,12 @@ function resdir(ripple) {
   var argv = require('minimist')(process.argv.slice(2)),
       folders = (argv.r || argv.resdirs || '').split(',').concat(dir).filter(Boolean).map(function (d) {
     return (0, _path.resolve)(d);
-  }).map((0, _append2.default)('/resources/**/!(test).{js,css}'));
-
-  _chokidar2.default.watch(folders, { ignored: /\b_/ }).on('error', err).on('add', register(ripple)).on('change', register(ripple)).on('ready', function () {
+  }).map((0, _append2.default)('/resources/**/!(test).{js,css}')),
+      watcher = _chokidar2.default.watch(folders, { ignored: /\b_/ }).on('error', err).on('add', register(ripple)).on('change', register(ripple)).on('ready', function () {
     (0, _def2.default)(ripple, 'ready', true);
     (0, _values2.default)(ripple.resources).map(loaded(ripple));
     ripple.emit('ready');
+    if ((0, _lo2.default)(process.env.NODE_ENV) == 'prod' || (0, _lo2.default)(process.env.NODE_ENV) == 'production') watcher.close();
   });
 
   return ripple;
@@ -71,7 +75,7 @@ var register = function register(ripple) {
 
     ripple(res);
 
-    if (ripple.ready) loaded(res);
+    if (ripple.ready) loaded(ripple)(ripple.resources[res.name]);
   };
 };
 
