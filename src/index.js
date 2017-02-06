@@ -39,7 +39,7 @@ const register = ripple => path => {
   ripple(res)
 
   if (ripple.ready) 
-    loaded(res)
+    loaded(ripple)(ripple.resources[res.name])
 }
 
 import { resolve, basename, extname } from 'path'
