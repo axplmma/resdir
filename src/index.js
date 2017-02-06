@@ -10,17 +10,18 @@ export default function resdir(ripple, { dir = '.' } = {}){
           .filter(Boolean)
           .map(d => resolve(d))
           .map(append('/resources/**/!(test).{js,css}'))
-
-  chokidar.watch(folders, { ignored: /\b_/ })
-    .on('error', err)
-    .on('add', register(ripple))
-    .on('change', register(ripple))
-    .on('ready', () => {
-      def(ripple, 'ready', true)
-      values(ripple.resources)
-        .map(loaded(ripple)) 
-      ripple.emit('ready')
-    })
+      , watcher = chokidar.watch(folders, { ignored: /\b_/ })
+          .on('error', err)
+          .on('add', register(ripple))
+          .on('change', register(ripple))
+          .on('ready', () => {
+            def(ripple, 'ready', true)
+            values(ripple.resources)
+              .map(loaded(ripple)) 
+            ripple.emit('ready')
+            if (lo(process.env.NODE_ENV) == 'prod' || lo(process.env.NODE_ENV) == 'production') 
+              watcher.close()
+          })
 
   return ripple
 }
@@ -50,6 +51,7 @@ import values from 'utilise/values'
 import file from 'utilise/file'
 import def from 'utilise/def'
 import is from 'utilise/is'
+import lo from 'utilise/lo'
 const log = require('utilise/log')('[ri/resdir]')
     , err = require('utilise/err')('[ri/resdir]')
     , loaded = ripple => res => is.fn(res.headers.loaded) && res.headers.loaded(ripple, res)
