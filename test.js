@@ -146,4 +146,22 @@ describe('Resources Folder', function(){
       done()
     })
   })
+
+  it('should load but not watch files in prod', function(done){  
+    process.env.NODE_ENV = 'prod'
+    var ripple = resdir(fn(css(core())))
+    ripple.on('ready', d => {
+      expect(loadedResdir[0]).to.eql(ripple)
+      expect(loadedResdir[1].name).to.eql('data')
+      expect(loadedResdir[1].body).to.eql(String)
+      delete global.loadedResdir
+
+      fs.appendFileSync('./resources/data.js', ' ')
+      ripple.once('change', function(){
+        throw new Error('this should not be called')
+      })
+
+      time(1500, done)
+    })
+  })
 })
