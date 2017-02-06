@@ -102,7 +102,14 @@ describe('Resources Folder', function(){
       expect(loadedResdir[0]).to.eql(ripple)
       expect(loadedResdir[1].name).to.eql('data')
       expect(loadedResdir[1].body).to.eql(String)
-      done()
+      delete global.loadedResdir
+
+      fs.appendFileSync('./resources/data.js', ' ')
+      ripple.once('change', function(){
+        expect(loadedResdir[1].name).to.eql('data')
+        expect(loadedResdir[1].body).to.eql(String)
+        done()
+      })
     })
   })
 
