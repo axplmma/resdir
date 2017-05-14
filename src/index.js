@@ -9,7 +9,7 @@ export default function resdir(ripple, { dir = '.' } = {}){
           .concat(dir)
           .filter(Boolean)
           .map(d => resolve(d))
-          .map(append('/resources/**/!(test).{js,css}'))
+          .map(append('/resources/**/!(*test).{js,css}'))
       , watcher = chokidar.watch(folders, { ignored: /\b_/ })
           .on('error', err)
           .on('add', register(ripple))
