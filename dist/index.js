@@ -52,7 +52,7 @@ function resdir(ripple) {
   var argv = require('minimist')(process.argv.slice(2)),
       folders = (argv.r || argv.resdirs || '').split(',').concat(dir).filter(Boolean).map(function (d) {
     return (0, _path.resolve)(d);
-  }).map((0, _append2.default)('/resources/**/!(test).{js,css}')),
+  }).map((0, _append2.default)('/resources/**/!(*test).{js,css}')),
       watcher = _chokidar2.default.watch(folders, { ignored: /\b_/ }).on('error', err).on('add', register(ripple)).on('change', register(ripple)).on('ready', function () {
     (0, _def2.default)(ripple, 'ready', true);
     (0, _values2.default)(ripple.resources).map(loaded(ripple));
