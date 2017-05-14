@@ -19,6 +19,9 @@ describe('Resources Folder', function(){
       expect(ripple('sth')).to.be.a('function')
       expect(ripple('data')).to.be.eql(String)
       expect(ripple.resources.test).to.not.be.ok
+      expect(ripple.resources['foo.test']).to.not.be.ok
+      expect(ripple.resources['sth.test']).to.not.be.ok
+      expect(ripple.resources['component.test']).to.not.be.ok
       done()
     })
   })

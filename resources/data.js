@@ -6,4 +6,4 @@ module.exports = {
 
 function loaded() {
   global.loadedResdir = arguments
-}
+}  
