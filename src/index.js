@@ -1,8 +1,8 @@
 // -------------------------------------------
 // Loads resources from the /resources folder
 // -------------------------------------------
-export default function resdir(ripple, { dir = '.' } = {}){
-  log('creating')
+export default function resdir(ripple, { dir = '.', watch = isNonProd() } = {}){
+  log('creating', { watch })
   const argv = require('minimist')(process.argv.slice(2))
       , folders = (argv.r || argv.resdirs || '')
           .split(',')
@@ -15,12 +15,11 @@ export default function resdir(ripple, { dir = '.' } = {}){
           .on('add', register(ripple))
           .on('change', register(ripple))
           .on('ready', () => {
+            if (!watch) watcher.close()
             def(ripple, 'ready', true)
             values(ripple.resources)
               .map(loaded(ripple)) 
             ripple.emit('ready')
-            if (lo(process.env.NODE_ENV) == 'prod' || lo(process.env.NODE_ENV) == 'production') 
-              watcher.close()
           })
 
   return ripple
@@ -41,6 +40,10 @@ const register = ripple => path => {
 
   if (ripple.ready) 
     loaded(ripple)(ripple.resources[res.name])
+}
+
+function isNonProd(){
+  return lo(process.env.NODE_ENV) != 'prod' && lo(process.env.NODE_ENV) != 'production'
 }
 
 import { resolve, basename, extname } from 'path'

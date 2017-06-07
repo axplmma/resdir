@@ -66,7 +66,7 @@ describe('Resources Folder', function(){
   })
 
   it('should watch for changes', function(done){  
-    var ripple = resdir(fn(css(core())), path.resolve())
+    var ripple = resdir(fn(css(core())))
 
     ripple.on('ready', d => {
       expect(ripple('foo').name).to.be.eql('foo')
@@ -99,18 +99,17 @@ describe('Resources Folder', function(){
     })
   })
 
-  it('should invoke loaded function', function(done){  
+  it('should invoke loaded function', function(done){
     var ripple = resdir(fn(css(core())))
     ripple.on('ready', d => {
-      expect(loadedResdir[0]).to.eql(ripple)
-      expect(loadedResdir[1].name).to.eql('data')
-      expect(loadedResdir[1].body).to.eql(String)
-      delete global.loadedResdir
-
+      expect(ripple.loadedResdir[0]).to.eql(ripple)
+      expect(ripple.loadedResdir[1].name).to.eql('data')
+      expect(ripple.loadedResdir[1].body).to.eql(String)
+      delete ripple.loadedResdir
       fs.appendFileSync('./resources/data.js', ' ')
-      ripple.once('change', function(){
-        expect(loadedResdir[1].name).to.eql('data')
-        expect(loadedResdir[1].body).to.eql(String)
+      time(100, d => {
+        expect(ripple.loadedResdir[1].name).to.eql('data')
+        expect(ripple.loadedResdir[1].body).to.eql(String)
         done()
       })
     })
@@ -150,21 +149,45 @@ describe('Resources Folder', function(){
     })
   })
 
-  it('should load but not watch files in prod', function(done){  
-    process.env.NODE_ENV = 'prod'
-    var ripple = resdir(fn(css(core())))
+  it('should load but not watch files if disabled', function(done){  
+    var ripple = resdir(fn(css(core())), { watch: false })
     ripple.on('ready', d => {
-      expect(loadedResdir[0]).to.eql(ripple)
-      expect(loadedResdir[1].name).to.eql('data')
-      expect(loadedResdir[1].body).to.eql(String)
-      delete global.loadedResdir
+      expect(ripple.loadedResdir[0]).to.eql(ripple)
+      expect(ripple.loadedResdir[1].name).to.eql('data')
+      expect(ripple.loadedResdir[1].body).to.eql(String)
+      delete ripple.loadedResdir
 
-      fs.appendFileSync('./resources/data.js', ' ')
       ripple.once('change', function(){
         throw new Error('this should not be called')
       })
+      fs.appendFileSync('./resources/data.js', ' ')
 
-      time(1500, done)
+      time(500, d => { 
+        expect(ripple.loadedResdir).to.be.not.ok
+        done()
+      })
     })
   })
+
+  it('should load but not watch files if disabled (prod by default)', function(done){  
+    process.env.NODE_ENV = 'prod'
+    var ripple = resdir(fn(css(core())))
+    ripple.on('ready', d => {
+      expect(ripple.loadedResdir[0]).to.eql(ripple)
+      expect(ripple.loadedResdir[1].name).to.eql('data')
+      expect(ripple.loadedResdir[1].body).to.eql(String)
+      delete ripple.loadedResdir
+
+      ripple.once('change', function(){
+        throw new Error('this should not be called')
+      })
+      fs.appendFileSync('./resources/data.js', ' ')
+
+      time(500, d => { 
+        expect(ripple.loadedResdir).to.be.not.ok
+        done()
+      })
+    })
+  })
+
 })
