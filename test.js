@@ -18,6 +18,7 @@ describe('Resources Folder', function(){
       expect(ripple('bar.css')).to.equal('.bar {}')
       expect(ripple('sth')).to.be.a('function')
       expect(ripple('data')).to.be.eql(String)
+      expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
       expect(ripple.resources['foo.test']).to.not.be.ok
       expect(ripple.resources['sth.test']).to.not.be.ok
@@ -34,6 +35,7 @@ describe('Resources Folder', function(){
       expect(ripple('bar.css')).to.equal('.bar {}')
       expect(ripple('sth')).to.be.a('function')
       expect(ripple('data')).to.be.eql(String)
+      expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
       done()
     })
@@ -47,6 +49,7 @@ describe('Resources Folder', function(){
       expect(ripple('bar.css')).to.equal('.bar {}')
       expect(ripple('sth')).to.be.a('function')
       expect(ripple('data')).to.be.eql(String)
+      expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
       done()
     })
@@ -60,6 +63,7 @@ describe('Resources Folder', function(){
       expect(ripple('bar.css')).to.equal('.bar {}')
       expect(ripple('sth')).to.be.a('function')
       expect(ripple('data')).to.be.eql(String)
+      expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
       done()
     })

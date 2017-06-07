@@ -14,11 +14,12 @@ export default function resdir(ripple, { dir = '.', watch = isNonProd() } = {}){
           .on('error', err)
           .on('add', register(ripple))
           .on('change', register(ripple))
-          .on('ready', () => {
+          .on('ready', async () => {
             if (!watch) watcher.close()
+            await Promise.all(values(ripple.resources)
+              .map(loaded(ripple)))
+
             def(ripple, 'ready', true)
-            values(ripple.resources)
-              .map(loaded(ripple)) 
             ripple.emit('ready')
           })
 
