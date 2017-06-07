@@ -4,6 +4,6 @@ module.exports = {
 , headers: { loaded: loaded }
 }
 
-function loaded() {
-  global.loadedResdir = arguments
-}  
+function loaded(ripple) {
+  ripple.loadedResdir = arguments
+}                                                             
