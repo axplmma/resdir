@@ -46,18 +46,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function resdir(ripple) {
   var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
       _ref$dir = _ref.dir,
-      dir = _ref$dir === undefined ? '.' : _ref$dir;
+      dir = _ref$dir === undefined ? '.' : _ref$dir,
+      _ref$watch = _ref.watch,
+      watch = _ref$watch === undefined ? isNonProd() : _ref$watch;
 
-  log('creating');
+  log('creating', { watch: watch });
   var argv = require('minimist')(process.argv.slice(2)),
       folders = (argv.r || argv.resdirs || '').split(',').concat(dir).filter(Boolean).map(function (d) {
     return (0, _path.resolve)(d);
   }).map((0, _append2.default)('/resources/**/!(*test).{js,css}')),
-      watcher = _chokidar2.default.watch(folders, { ignored: /\b_/ }).on('error', err).on('add', register(ripple)).on('change', register(ripple)).on('ready', function () {
+      watcher = _chokidar2.default.watch(folders, { ignored: /\b_/ }).on('error', err).on('add', register(ripple)).on('change', register(ripple)).on('ready', async function () {
+    if (!watch) watcher.close();
+    await Promise.all((0, _values2.default)(ripple.resources).map(loaded(ripple)));
+
     (0, _def2.default)(ripple, 'ready', true);
-    (0, _values2.default)(ripple.resources).map(loaded(ripple));
     ripple.emit('ready');
-    if ((0, _lo2.default)(process.env.NODE_ENV) == 'prod' || (0, _lo2.default)(process.env.NODE_ENV) == 'production') watcher.close();
   });
 
   return ripple;
@@ -78,6 +81,10 @@ var register = function register(ripple) {
     if (ripple.ready) loaded(ripple)(ripple.resources[res.name]);
   };
 };
+
+function isNonProd() {
+  return (0, _lo2.default)(process.env.NODE_ENV) != 'prod' && (0, _lo2.default)(process.env.NODE_ENV) != 'production';
+}
 
 var log = require('utilise/log')('[ri/resdir]'),
     err = require('utilise/err')('[ri/resdir]'),
