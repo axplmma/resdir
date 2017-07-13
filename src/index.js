@@ -1,7 +1,7 @@
 // -------------------------------------------
 // Loads resources from the /resources folder
 // -------------------------------------------
-export default function resdir(ripple, { dir = '.', watch = isNonProd() } = {}){
+export default function resdir(ripple, { dir = '.', watch = isNonProd(), glob = '/resources/**/!(*test).{js,css}' } = {}){
   log('creating', { watch })
   const argv = require('minimist')(process.argv.slice(2))
       , folders = (argv.r || argv.resdirs || '')
@@ -9,7 +9,7 @@ export default function resdir(ripple, { dir = '.', watch = isNonProd() } = {}){
           .concat(dir)
           .filter(Boolean)
           .map(d => resolve(d))
-          .map(append('/resources/**/!(*test).{js,css}'))
+          .map(append(glob))
       , watcher = chokidar.watch(folders, { ignored: /\b_/ })
           .on('error', err)
           .on('add', register(ripple))

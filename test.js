@@ -27,8 +27,8 @@ describe('Resources Folder', function(){
     })
   })
 
-  it('should auto load from specific dir', function(done){  
-    var ripple = resdir(fn(css(core())), path.resolve())
+  it('should auto load from specific dir with opts', function(done){  
+    var ripple = resdir(fn(css(core())), { dir: path.resolve() })
     ripple.on('ready', d => {
       expect(ripple('foo')).to.be.a('function')
       expect(ripple('foo').name).to.eql('foo')
@@ -41,8 +41,8 @@ describe('Resources Folder', function(){
     })
   })
 
-  it('should auto load from specific dir with opts', function(done){  
-    var ripple = resdir(fn(css(core())), { dir: path.resolve() })
+  it('should auto load with specific glob', function(done){  
+    var ripple = resdir(fn(css(core())), { dir: path.resolve('./resources'), glob: '/**/!(*test).{js,css}' })
     ripple.on('ready', d => {
       expect(ripple('foo')).to.be.a('function')
       expect(ripple('foo').name).to.eql('foo')
