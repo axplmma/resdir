@@ -1,7 +1,7 @@
 {
   "name": "rijs.resdir",
-  "version": "1.1.0",
-  "main": "dist",
+  "version": "1.2.0",
+  "main": "src",
   "browser": "./node_modules/utilise/identity.js",
   "author": "Pedram Emrouznejad (https://github.com/pemrouz)",
   "repository": {
@@ -9,28 +9,20 @@
     "url": "git://github.com/rijs/resdir.git"
   },
   "scripts": {
-    "ignore": "find ./dist -type f -exec sed -i \"s/function _interopRequire/\\/* istanbul ignore next *\\/\\nfunction _interopRequire/g\" {} ;",
     "reset": "sh -c \"echo '/* istanbul ignore next */' > ./resources/foo.js\" && sh -c \"echo 'module.exports = function foo(){ }' >> ./resources/foo.js\"",
-    "babel": "babel src -d dist",
-    "clean": "rm -rf dist && mkdir dist",
-    "build": "npm run clean && npm run babel && npm run ignore",
     "test": "npm run reset && istanbul test ./node_modules/mocha/bin/_mocha --report html -- -R spec",
     "coverage": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
     "cov": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
-    "version": "npm run build && git add -A",
+    "version": "git add -A",
     "postversion": "git push && git push --tags"
   },
   "license": "pemrouz.mit-license.org",
   "devDependencies": {
-    "babel-cli": "*",
-    "babel-preset-es2015": "*",
-    "browserify": "*",
     "chai": "*",
     "coveralls": "*",
     "istanbul": "*",
     "mocha": "*",
     "mocha-lcov-reporter": "*",
-    "uglify-js": "*",
     "rijs.core": "*",
     "rijs.css": "*",
     "rijs.fn": "*"

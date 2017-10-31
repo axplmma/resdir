@@ -1,7 +1,7 @@
 // -------------------------------------------
 // Loads resources from the /resources folder
 // -------------------------------------------
-export default function resdir(ripple, { dir = '.', watch = isNonProd(), glob = '/resources/**/!(*test).{js,css}' } = {}){
+module.exports = function resdir(ripple, { dir = '.', watch = isNonProd(), glob = '/resources/**/!(*test).{js,css}' } = {}){
   log('creating', { watch })
   const argv = require('minimist')(process.argv.slice(2))
       , folders = (argv.r || argv.resdirs || '')
@@ -10,21 +10,34 @@ export default function resdir(ripple, { dir = '.', watch = isNonProd(), glob = 
           .filter(Boolean)
           .map(d => resolve(d))
           .map(append(glob))
-      , watcher = chokidar.watch(folders, { ignored: /\b_/ })
-          .on('error', err)
-          .on('add', register(ripple))
-          .on('change', register(ripple))
-          .on('ready', async () => {
-            if (!watch) watcher.close()
-            await Promise.all(values(ripple.resources)
-              .map(loaded(ripple)))
 
-            def(ripple, 'ready', true)
-            ripple.emit('ready')
-          })
+  ripple.watcher = chokidar.watch(folders, { ignored: /\b_/ })
+    .on('error', err)
+    .on('add', register(ripple))
+    .on('change', register(ripple))
+    .on('ready', async () => {
+      if (!watch) ripple.watcher.close()
+      await Promise.all(values(ripple.resources)
+        .map(loaded(ripple)))
+        .catch(err)
 
+      def(ripple, 'ready', true)
+      ripple.emit('ready')
+    })
+
+  ripple.get = get(ripple)
   return ripple
 }
+
+const get = ripple => async name => 
+  name in ripple.resources 
+? ripple(name)
+: await ripple
+    .on('change')
+    .map(([name]) => name)
+    .filter(d => d == name)
+    .filter((d, i, n) => n.source.emit('stop'))
+    .map(ripple)
 
 const register = ripple => path => {
   var last = basename(path)
@@ -47,15 +60,15 @@ function isNonProd(){
   return lo(process.env.NODE_ENV) != 'prod' && lo(process.env.NODE_ENV) != 'production'
 }
 
-import { resolve, basename, extname } from 'path'
-import { existsSync as exists } from 'fs'
-import chokidar from 'chokidar'
-import append from 'utilise/append'
-import values from 'utilise/values'
-import file from 'utilise/file'
-import def from 'utilise/def'
-import is from 'utilise/is'
-import lo from 'utilise/lo'
-const log = require('utilise/log')('[ri/resdir]')
+const { resolve, basename, extname } = require('path')
+    , exists = require('fs').existsSync
+    , chokidar = require('chokidar')
+    , append = require('utilise/append')
+    , values = require('utilise/values')
+    , file = require('utilise/file')
+    , def = require('utilise/def')
+    , is = require('utilise/is')
+    , lo = require('utilise/lo')
+    , log = require('utilise/log')('[ri/resdir]')
     , err = require('utilise/err')('[ri/resdir]')
     , loaded = ripple => res => is.fn(res.headers.loaded) && res.headers.loaded(ripple, res)

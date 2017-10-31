@@ -2,10 +2,10 @@ var expect = require('chai').expect
   , client = require('utilise/client')
   , time = require('utilise/time')
   , path = require('path')
-  , core = require('rijs.core').default
-  , css = require('rijs.css').default
-  , fn = require('rijs.fn').default
-  , resdir = require('./').default
+  , core = require('rijs.core')
+  , css = require('rijs.css')
+  , fn = require('rijs.fn')
+  , resdir = require('./')
   , fs = require('fs')
  
 describe('Resources Folder', function(){
@@ -23,6 +23,7 @@ describe('Resources Folder', function(){
       expect(ripple.resources['foo.test']).to.not.be.ok
       expect(ripple.resources['sth.test']).to.not.be.ok
       expect(ripple.resources['component.test']).to.not.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -37,6 +38,7 @@ describe('Resources Folder', function(){
       expect(ripple('data')).to.be.eql(String)
       expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -51,6 +53,7 @@ describe('Resources Folder', function(){
       expect(ripple('data')).to.be.eql(String)
       expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -65,6 +68,7 @@ describe('Resources Folder', function(){
       expect(ripple('data')).to.be.eql(String)
       expect(ripple('promise')).to.be.eql(Date)
       expect(ripple.resources.test).to.not.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -79,6 +83,7 @@ describe('Resources Folder', function(){
       ripple.once('change', function(){
         expect(ripple('foo').name).to.be.eql('baz')
         fs.writeFileSync('./resources/foo.js', 'module.exports = function foo(){ }')
+        ripple.watcher.close()
         done()
       })
     })
@@ -91,6 +96,7 @@ describe('Resources Folder', function(){
       expect(ripple('component.css')).to.be.eql(':host {}')
       expect(ripple.resources.component.headers.needs).to.be.eql('[css]')
       expect(ripple.resources.foo.headers.needs).to.be.not.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -99,6 +105,7 @@ describe('Resources Folder', function(){
     var ripple = resdir(fn(css(core())))
     ripple.on('ready', d => {
       expect(ripple.resources.ignore).to.not.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -110,10 +117,12 @@ describe('Resources Folder', function(){
       expect(ripple.loadedResdir[1].name).to.eql('data')
       expect(ripple.loadedResdir[1].body).to.eql(String)
       delete ripple.loadedResdir
+      // TODO: This is not unref'd preventing exit 
       fs.appendFileSync('./resources/data.js', ' ')
       time(100, d => {
         expect(ripple.loadedResdir[1].name).to.eql('data')
         expect(ripple.loadedResdir[1].body).to.eql(String)
+        ripple.watcher.close()
         done()
       })
     })
@@ -132,6 +141,7 @@ describe('Resources Folder', function(){
       expect('data' in ripple.resources).to.be.ok
       expect('secondary' in ripple.resources).to.be.ok
       expect('tertiary' in ripple.resources).to.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -149,6 +159,7 @@ describe('Resources Folder', function(){
       expect('data' in ripple.resources).to.be.ok
       expect('secondary' in ripple.resources).to.be.ok
       expect('tertiary' in ripple.resources).to.be.ok
+      ripple.watcher.close()
       done()
     })
   })
@@ -191,6 +202,15 @@ describe('Resources Folder', function(){
         expect(ripple.loadedResdir).to.be.not.ok
         done()
       })
+    })
+  })
+
+  it('should allow awaiting resource', function(done){  
+    const ripple = resdir(fn(css(core())))
+    ripple.get('foo').then(foo => {
+      expect(foo.name).to.be.eql('foo')
+      ripple.watcher.close()
+      done()
     })
   })
 
