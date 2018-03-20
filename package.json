@@ -10,7 +10,7 @@
   },
   "scripts": {
     "reset": "sh -c \"echo '/* istanbul ignore next */' > ./resources/foo.js\" && sh -c \"echo 'module.exports = function foo(){ }' >> ./resources/foo.js\"",
-    "test": "npm run reset && istanbul test ./node_modules/mocha/bin/_mocha --report html -- -R spec",
+    "test": "npm run reset && istanbul test ./node_modules/mocha/bin/_mocha --report html --trace-warnings -- -R spec",
     "coverage": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && rm -rf ./coverage",
     "cov": "npm run reset && istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec",
     "version": "git add -A",
