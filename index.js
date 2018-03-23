@@ -55,10 +55,11 @@ module.exports = function loader(ripple, {
     return load(path)
   }
 
+  // TODO: move back to core as chainable 
   ripple.resource = (name, body, headers) => {
-    is.str(body)
-      ? ripple.load(body, name)
-      : ripple(name, body, headers)
+    // is.str(body)
+    //   ? ripple.load(body, name)
+    ripple(name, body, headers)
     return ripple
   }
 
@@ -89,8 +90,7 @@ const rtype = (ripple, path) => values(ripple.types)
 
 const rel = (dir, path) => './' + relative(dir, path).replace(/\\/g, '/')
 
-const bresolve = (module, parent) => require('browser-resolve')
-  .sync(module, { filename: parent })
+const bresolve = (module, parent) => require('browser-resolve').sync(module, { filename: parent })
 
 function isNonProd(){
   return lo(process.env.NODE_ENV) != 'prod' && lo(process.env.NODE_ENV) != 'production'
