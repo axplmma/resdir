@@ -21,15 +21,15 @@
     "chai": "*",
     "coveralls": "*",
     "istanbul": "*",
-    "mocha": "*",
+    "mocha": "^5.1.0",
     "mocha-lcov-reporter": "*",
-    "rijs.core": "*",
-    "rijs.css": "*",
-    "rijs.fn": "*"
+    "rijs.core": "^1.2.4",
+    "rijs.css": "^1.2.4",
+    "rijs.fn": "^1.2.5"
   },
   "dependencies": {
     "chokidar": "^1.0.5",
     "minimist": "^1.2.0",
-    "utilise": "*"
+    "utilise": "^2.3.3"
   }
 }
