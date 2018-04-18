@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "chokidar": "^1.0.5",
+    "glob": "^7.1.2",
     "minimist": "^1.2.0",
     "utilise": "^2.3.3"
   }
