@@ -1,6 +1,6 @@
 {
   "name": "rijs.resdir",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "main": "index",
   "browser": "./node_modules/utilise/identity.js",
   "author": "Pedram Emrouznejad (https://github.com/pemrouz)",
