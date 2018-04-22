@@ -21,7 +21,7 @@
     "chai": "*",
     "coveralls": "*",
     "istanbul": "*",
-    "mocha": "^5.1.0",
+    "mocha": "^5.1.1",
     "mocha-lcov-reporter": "*",
     "rijs.core": "^1.2.4",
     "rijs.css": "^1.2.4",
@@ -31,6 +31,6 @@
     "chokidar": "^1.0.5",
     "glob": "^7.1.2",
     "minimist": "^1.2.0",
-    "utilise": "^2.3.3"
+    "utilise": "^2.3.5"
   }
 }
